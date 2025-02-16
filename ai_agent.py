@@ -1,4 +1,8 @@
 import gradio as gr
+import logging
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
 
 # Predefined dataset of questions and answers
 predefined_data = {
@@ -26,16 +30,34 @@ predefined_data = {
     ]
 }
 
-# Function to find the most relevant answer
-def get_answer(user_input):
+def get_answer(user_input: str) -> str:
+    """
+    Find the most relevant answer from the predefined dataset.
+
+    Args:
+        user_input (str): The user's input question.
+
+    Returns:
+        str: The most relevant answer or a default response if no match is found.
+    """
     user_input = user_input.lower().strip()
     for qa in predefined_data["questions"]:
         if user_input in qa["question"].lower():
             return qa["answer"]
+    logging.error(f"No relevant answer found for the question: {user_input}")
     return "I'm sorry, I don't have information on that. Please ask another question about Thoughtful AI's agents."
 
-# Gradio interface for the chat agent
-def chat_interface(user_input, chat_history):
+def chat_interface(user_input: str, chat_history: list) -> list:
+    """
+    Handle the chat interface logic.
+
+    Args:
+        user_input (str): The user's input question.
+        chat_history (list): The chat history.
+
+    Returns:
+        list: Updated chat history with the new user input and response.
+    """
     chat_history = chat_history or []
     response = get_answer(user_input)
     chat_history.append((user_input, response))
